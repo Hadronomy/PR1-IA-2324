@@ -26,8 +26,8 @@ where
     /// Creates a new [`GraphMap<TNode, TEdge, Ty>`] with the specified capacity.
     pub fn with_capacity(nodes: usize, edges: usize) -> Self {
         GraphMap {
-            nodes: IndexMap::with_capacity(nodes),
-            edges: IndexMap::with_capacity(edges),
+            nodes: IndexMap::with_capacity(nodes.next_power_of_two()),
+            edges: IndexMap::with_capacity(edges.next_power_of_two()),
             ty: PhantomData,
         }
     }
