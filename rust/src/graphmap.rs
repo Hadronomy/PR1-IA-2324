@@ -7,6 +7,9 @@ use indexmap::IndexMap;
 pub type Directed = ();
 pub type Undirected = ();
 
+/// A graph data structure.
+/// This is a general purpose graph data structure that can be used to represent
+/// both directed and undirected graphs.
 #[derive(Clone, Debug)]
 pub struct GraphMap<TNode, TEdge, Ty = Undirected> {
     nodes: IndexMap<TNode, Vec<(TNode, CompactDirection)>>,
@@ -37,6 +40,19 @@ where
         (self.nodes.capacity(), self.edges.capacity())
     }
 
+    pub fn node_count(&self) -> usize {
+        self.nodes.len()
+    }
+
+    pub fn edge_count(&self) -> usize {
+        self.edges.len()
+    }
+
+    pub fn clear(&mut self) {
+        self.nodes.clear();
+        self.edges.clear();
+    }
+
     /// Adds a node to the graph.
     pub fn add_node(&mut self, node: TNode) -> TNode {
         self.nodes.entry(node).or_insert(Vec::new());
@@ -60,6 +76,22 @@ where
         }
         true
     }
+
+    pub fn contains_node(&self, node: TNode) -> bool {
+        self.nodes.contains_key(&node)
+    }
+
+    pub fn add_edge(&mut self, from: TNode, to: TNode, weight: TEdge) -> Option<TEdge> {
+        todo!();
+    }
+
+    pub fn remove_single_edge(&mut self, from: &TNode, to: &TNode, dir: CompactDirection) -> bool {
+        todo!();
+    }
+
+    pub fn remove_edge(&mut self, from: &TNode, to: &TNode) -> Option<TEdge> {
+        todo!();
+    }
 }
 
 impl<TNode, TEdge, Ty> Default for GraphMap<TNode, TEdge, Ty>
@@ -77,7 +109,7 @@ where
 }
 
 #[derive(Clone, Debug, PartialEq)]
-enum CompactDirection {
+pub enum CompactDirection {
     Outgoing,
     Incoming,
 }
