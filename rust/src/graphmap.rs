@@ -10,7 +10,6 @@ use std::{
 };
 
 use indexmap::{map::Keys, IndexMap};
-use rayon::vec;
 
 use crate::{iterator_wrap, Direction, EdgeType, Incoming, Outgoing, Undirected};
 
@@ -189,7 +188,7 @@ where
         Self {
             nodes: IndexMap::new(),
             edges: IndexMap::new(),
-            ty: PhantomData::default(),
+            ty: PhantomData,
         }
     }
 }
