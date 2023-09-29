@@ -23,4 +23,8 @@ fn main() {
         "bfs result: {:?}",
         graph.bfs(1, 5).iter().collect::<Vec<_>>()
     );
+    debug!(
+        "dfs result: {:?}",
+        graph.dfs(1, 5).iter().collect::<Vec<_>>()
+    )
 }

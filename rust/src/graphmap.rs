@@ -159,6 +159,25 @@ where
         }
         parents
     }
+
+    pub fn dfs(&self, start: TNode, goal: TNode) -> HashMap<TNode, TNode> {
+        let mut parents = HashMap::new();
+        let mut stack = vec![start];
+        let mut seen = HashSet::new();
+        seen.insert(start);
+        while let Some(node) = stack.pop() {
+            if node == goal {
+                break;
+            }
+            for neighbor in self.neighbors(node) {
+                if seen.insert(neighbor) {
+                    parents.insert(neighbor, node);
+                    stack.push(neighbor);
+                }
+            }
+        }
+        parents
+    }
 }
 
 impl<TNode, TEdge, Ty> Default for GraphMap<TNode, TEdge, Ty>
