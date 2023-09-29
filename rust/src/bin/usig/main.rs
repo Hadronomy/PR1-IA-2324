@@ -2,6 +2,7 @@ use tracing::*;
 
 use tracing_subscriber::field::debug;
 use usig::*;
+use nom::AsChar;
 
 #[instrument]
 fn main() {
