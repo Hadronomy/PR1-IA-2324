@@ -27,5 +27,5 @@ fn main() {
     debug!(
         "dfs result: {:?}",
         graph.dfs(1, 5).iter().collect::<Vec<_>>()
-    )
+    );
 }
