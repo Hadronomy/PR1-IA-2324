@@ -1,5 +1,5 @@
 //! Based of petgraph implementation.
-//! 
+//!
 //! See https://github.com/petgraph/petgraph/blob/master/src/graph_impl/mod.rs
 
 use std::{
@@ -12,6 +12,7 @@ use std::{
 };
 
 use indexmap::{map::Keys, IndexMap};
+use tracing::debug;
 
 use crate::{iterator_wrap, Direction, EdgeType, Incoming, Outgoing, Undirected};
 
@@ -36,7 +37,8 @@ impl<TNode> NodeTrait for TNode where TNode: Eq + Hash + Copy + Ord {}
 
 impl<TNode, TEdge, Ty> GraphMap<TNode, TEdge, Ty>
 where
-    TNode: NodeTrait,
+    TNode: NodeTrait + std::fmt::Debug,
+    TEdge: Default + Copy + std::ops::Add<Output = TEdge> + std::fmt::Debug,
     Ty: EdgeType,
 {
     /// Creates a new [`GraphMap<TNode, TEdge, Ty>`].
@@ -129,6 +131,15 @@ where
         self.edges.contains_key(&(from, to))
     }
 
+    pub fn get_edge(&self, from: TNode, to: TNode) -> Option<&TEdge> {
+        // TODO: Check for directionality
+        if let value @ Some(_) = self.edges.get(&(from, to)) {
+            value
+        } else {
+            self.edges.get(&(to, from))
+        }
+    }
+
     pub fn nodes(&self) -> Nodes<TNode> {
         Nodes {
             iter: self.nodes.keys().cloned(),
@@ -142,12 +153,30 @@ where
         }
     }
 
-    pub fn bfs(&self, start: TNode, goal: TNode) -> HashMap<TNode, TNode> {
+    pub fn path_cost(&self, tree: HashMap<TNode, TNode>, goal: TNode) -> TEdge {
+        let mut acc = TEdge::default();
+        let mut next: Option<TNode> = Some(goal);
+        while let Some(node) = next {
+            if let Some(parent) = tree.get(&node) {
+                acc = acc + *self.get_edge(*parent, node).unwrap();
+                next = Some(*parent);
+            } else {
+                break;
+            }
+        }
+        acc
+    }
+
+    pub fn bfs(&self, start: TNode, goal: TNode) -> GraphSearchReport<TNode, TEdge> {
         let mut parents = HashMap::new();
         let mut queue = VecDeque::from(vec![start]);
         let mut seen = HashSet::new();
+        let mut generated = Vec::new();
+        let mut expanded = Vec::new();
         seen.insert(start);
+        expanded.push(start);
         while let Some(node) = queue.pop_front() {
+            generated.push(node);
             if node == goal {
                 break;
             }
@@ -155,18 +184,28 @@ where
                 if seen.insert(neighbor) {
                     parents.insert(neighbor, node);
                     queue.push_back(neighbor);
+                    expanded.push(neighbor);
                 }
             }
         }
-        parents
+        GraphSearchReport {
+            path: parents.clone(),
+            distance: self.path_cost(parents, goal),
+            generated_nodes: generated,
+            expanded_nodes: expanded,
+        }
     }
 
-    pub fn dfs(&self, start: TNode, goal: TNode) -> HashMap<TNode, TNode> {
+    pub fn dfs(&self, start: TNode, goal: TNode) -> GraphSearchReport<TNode, TEdge> {
         let mut parents = HashMap::new();
         let mut stack = vec![start];
         let mut seen = HashSet::new();
+        let mut generated = Vec::new();
+        let mut expanded = Vec::new();
         seen.insert(start);
+        expanded.push(start);
         while let Some(node) = stack.pop() {
+            generated.push(node);
             if node == goal {
                 break;
             }
@@ -174,16 +213,22 @@ where
                 if seen.insert(neighbor) {
                     parents.insert(neighbor, node);
                     stack.push(neighbor);
+                    expanded.push(neighbor);
                 }
             }
         }
-        parents
+        GraphSearchReport {
+            path: parents.clone(),
+            distance: self.path_cost(parents, goal),
+            generated_nodes: generated,
+            expanded_nodes: expanded,
+        }
     }
 }
 
 impl<TNode, TEdge, Ty> Default for GraphMap<TNode, TEdge, Ty>
 where
-    TNode: Eq + Hash + Copy + Ord,
+    TNode: NodeTrait,
 {
     /// Creates an empty [`GraphMap<TNode, TEdge, Ty>`].
     fn default() -> Self {
@@ -193,6 +238,13 @@ where
             ty: PhantomData,
         }
     }
+}
+#[derive(Clone, Debug)]
+pub struct GraphSearchReport<TNode, TEdge> {
+    path: HashMap<TNode, TNode>,
+    distance: TEdge,
+    generated_nodes: Vec<TNode>,
+    expanded_nodes: Vec<TNode>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
