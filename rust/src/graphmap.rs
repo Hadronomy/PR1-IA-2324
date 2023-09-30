@@ -1,4 +1,6 @@
-//! TODO
+//! Based of petgraph implementation.
+//! 
+//! See https://github.com/petgraph/petgraph/blob/master/src/graph_impl/mod.rs
 
 use std::{
     collections::{HashMap, HashSet, VecDeque},
