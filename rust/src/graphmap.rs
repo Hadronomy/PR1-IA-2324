@@ -12,7 +12,6 @@ use std::{
 };
 
 use indexmap::{map::Keys, IndexMap};
-use tracing::debug;
 
 use crate::{iterator_wrap, Direction, EdgeType, Incoming, Outgoing, Undirected};
 
