@@ -29,7 +29,9 @@ between the two versions, but the general idea is the same.
 
 ### Rust
 
-TODO
+```bash
+cd rust; cargo run --release --bin usig -- -h
+```
 
 ### C++
 
@@ -39,7 +41,9 @@ TODO
 
 ### Rust
 
-TODO
+```bash
+cd rust; cargo install --path .
+```
 
 ### C++
 
@@ -50,3 +54,5 @@ TODO
 TODO
 
 ## Benchmarks
+
+TODO
