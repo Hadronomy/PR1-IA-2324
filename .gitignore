@@ -5,3 +5,7 @@
 # ignore the target directory
 
 target
+
+# program execution output
+
+output.txt

@@ -145,6 +145,15 @@ where
         }
     }
 
+    /// Returns the neighbors of a given node in the graph.
+    ///
+    /// # Arguments
+    ///
+    /// * `node` - A node in the graph.
+    ///
+    /// # Returns
+    ///
+    /// A `Neighbors` struct containing the neighbors of the given node and their edge weights.
     pub fn neighbors(&self, node: TNode) -> Neighbors<TNode, Ty> {
         Neighbors {
             iter: self.nodes[&node].iter(),
@@ -166,6 +175,19 @@ where
         acc
     }
 
+    /// Performs a breadth-first search on the graph, starting from the given start node and
+    /// searching for the given goal node.
+    ///
+    /// # Arguments
+    ///
+    /// * `start` - The starting node for the search.
+    /// * `goal` - The goal node to search for.
+    ///
+    /// # Returns
+    ///
+    /// A `GraphSearchReport` struct containing information about the search, including the path
+    /// from the start node to the goal node (if one was found), the number of nodes visited, and
+    /// the number of edges traversed.
     pub fn bfs(&self, start: TNode, goal: TNode) -> GraphSearchReport<TNode, TEdge> {
         let mut parents = HashMap::new();
         let mut queue = VecDeque::from(vec![start]);
@@ -240,10 +262,32 @@ where
 }
 #[derive(Clone, Debug)]
 pub struct GraphSearchReport<TNode, TEdge> {
-    path: HashMap<TNode, TNode>,
-    distance: TEdge,
-    generated_nodes: Vec<TNode>,
-    expanded_nodes: Vec<TNode>,
+    pub path: HashMap<TNode, TNode>,
+    pub distance: TEdge,
+    pub generated_nodes: Vec<TNode>,
+    pub expanded_nodes: Vec<TNode>,
+}
+
+impl<TNode, TEdge> GraphSearchReport<TNode, TEdge> {
+    pub fn str_path(&self, start: TNode, goal: TNode) -> String
+    where
+        TNode: NodeTrait + std::fmt::Display,
+    {
+        let mut acc = String::new();
+        let mut next: Option<TNode> = Some(goal);
+        while let Some(node) = next {
+            if let Some(parent) = self.path.get(&node) {
+                match acc.len() {
+                    0 => acc = format!("{}", node),
+                    _ => acc = format!("{} -> {}", node, acc),
+                }
+                next = Some(*parent);
+            } else {
+                break;
+            }
+        }
+        format!("{} -> {}", start, acc)
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
