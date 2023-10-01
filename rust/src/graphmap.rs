@@ -195,17 +195,17 @@ where
         let mut generated = Vec::new();
         let mut expanded = Vec::new();
         seen.insert(start);
-        expanded.push(start);
+        generated.push(start);
         while let Some(node) = queue.pop_front() {
-            generated.push(node);
+            expanded.push(node);
             if node == goal {
                 break;
             }
             for neighbor in self.neighbors(node) {
+                generated.push(neighbor);
                 if seen.insert(neighbor) {
                     parents.insert(neighbor, node);
                     queue.push_back(neighbor);
-                    expanded.push(neighbor);
                 }
             }
         }
@@ -224,17 +224,17 @@ where
         let mut generated = Vec::new();
         let mut expanded = Vec::new();
         seen.insert(start);
-        expanded.push(start);
+        generated.push(start);
         while let Some(node) = stack.pop() {
-            generated.push(node);
+            expanded.push(node);
             if node == goal {
                 break;
             }
             for neighbor in self.neighbors(node) {
+                generated.push(neighbor);
                 if seen.insert(neighbor) {
                     parents.insert(neighbor, node);
                     stack.push(neighbor);
-                    expanded.push(neighbor);
                 }
             }
         }
