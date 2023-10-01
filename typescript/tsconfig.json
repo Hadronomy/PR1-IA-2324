@@ -14,8 +14,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noUncheckedIndexedAccess": true,
-    "incremental": true
+    "noUncheckedIndexedAccess": true
   },
   "exclude": ["node_modules"]
 }
