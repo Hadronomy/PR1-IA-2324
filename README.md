@@ -12,7 +12,7 @@
 # **U**ninformed **S**earch **I**n **G**raphs (USIG)
 
 This project contains the implementation required by the **1st assignment** of the
-**IA course** of the **computer science** degree at the University of La Laguna.
+**AI course** of the **computer science** degree at the University of La Laguna.
 
 The implementation has a c++(cpp directory) version and a rust
 version(rust directory). The implementation details vary
