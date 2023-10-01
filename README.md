@@ -14,8 +14,8 @@
 This project contains the implementation required by the **1st assignment** of the
 **AI course** of the **computer science** degree at the University of La Laguna.
 
-The implementation has a c++(cpp directory) version and a rust
-version(rust directory). The implementation details vary
+The implementation has a typescript`./typescript` version and a rust
+version`./rust`. The implementation details vary
 between the two versions, but the general idea is the same.
 
 [Getting started](#getting-started) •
@@ -33,7 +33,7 @@ between the two versions, but the general idea is the same.
 cd rust; cargo run --release --bin usig -- -h
 ```
 
-### C++
+### Typescript
 
 TODO
 
@@ -45,7 +45,7 @@ TODO
 cd rust; cargo install --path .
 ```
 
-### C++
+### Typescript
 
 TODO
 

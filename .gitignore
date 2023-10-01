@@ -9,3 +9,9 @@ target
 # program execution output
 
 output.txt
+
+# cmake
+
+CMakeFiles
+*.cmake
+build
