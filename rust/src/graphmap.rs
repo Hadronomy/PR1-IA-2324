@@ -185,7 +185,7 @@ where
     ///
     /// # Returns
     ///
-    /// A `GraphSearchReport` struct containing information about the search, including the path
+    /// A [`GraphSearchReport`] struct containing information about the search, including the path
     /// from the start node to the goal node (if one was found), the number of nodes visited, and
     /// the number of edges traversed.
     pub fn bfs(&self, start: TNode, goal: TNode) -> GraphSearchReport<TNode, TEdge> {
