@@ -209,9 +209,17 @@ where
                 }
             }
         }
+        if let None = parents.get(&goal) {
+            return GraphSearchReport {
+                path: None,
+                distance: None,
+                generated_nodes: generated,
+                expanded_nodes: expanded,
+            };
+        }
         GraphSearchReport {
-            path: parents.clone(),
-            distance: self.path_cost(parents, goal),
+            path: Some(parents.clone()),
+            distance: Some(self.path_cost(parents, goal)),
             generated_nodes: generated,
             expanded_nodes: expanded,
         }
@@ -238,9 +246,17 @@ where
                 }
             }
         }
+        if parents.get(&goal).is_none() {
+            return GraphSearchReport {
+                path: None,
+                distance: None,
+                generated_nodes: generated,
+                expanded_nodes: expanded,
+            };
+        }
         GraphSearchReport {
-            path: parents.clone(),
-            distance: self.path_cost(parents, goal),
+            path: Some(parents.clone()),
+            distance: Some(self.path_cost(parents, goal)),
             generated_nodes: generated,
             expanded_nodes: expanded,
         }
@@ -262,8 +278,8 @@ where
 }
 #[derive(Clone, Debug)]
 pub struct GraphSearchReport<TNode, TEdge> {
-    pub path: HashMap<TNode, TNode>,
-    pub distance: TEdge,
+    pub path: Option<HashMap<TNode, TNode>>,
+    pub distance: Option<TEdge>,
     pub generated_nodes: Vec<TNode>,
     pub expanded_nodes: Vec<TNode>,
 }
@@ -274,9 +290,13 @@ impl<TNode, TEdge> GraphSearchReport<TNode, TEdge> {
         TNode: NodeTrait + std::fmt::Display,
     {
         let mut acc = String::new();
+        let path = match &self.path {
+            Some(path) => path,
+            None => return acc,
+        };
         let mut next: Option<TNode> = Some(goal);
         while let Some(node) = next {
-            if let Some(parent) = self.path.get(&node) {
+            if let Some(parent) = path.get(&node) {
                 match acc.len() {
                     0 => acc = format!("{}", node),
                     _ => acc = format!("{} -> {}", node, acc),

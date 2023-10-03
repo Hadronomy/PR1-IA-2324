@@ -58,7 +58,7 @@ fn main() {
         args.starting_node.to_string(),
         args.ending_node.to_string(),
         result.str_path(args.starting_node, args.ending_node),
-        result.distance.to_string(),
+        result.distance.map_or_else(String::new, |f| f.to_string()),
         format!("{:?}", result.generated_nodes),
         format!("{:?}", result.expanded_nodes),
     ]);
