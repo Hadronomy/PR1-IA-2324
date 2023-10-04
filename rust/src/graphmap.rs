@@ -12,6 +12,7 @@ use std::{
 };
 
 use indexmap::{map::Keys, IndexMap};
+use tracing::info;
 
 use crate::{iterator_wrap, Direction, EdgeType, Incoming, Outgoing, Undirected};
 
@@ -31,8 +32,8 @@ impl<N: Eq + Hash + fmt::Debug, E: fmt::Debug, Ty: EdgeType> fmt::Debug for Grap
     }
 }
 
-pub trait NodeTrait: Eq + Hash + Copy + Ord {}
-impl<TNode> NodeTrait for TNode where TNode: Eq + Hash + Copy + Ord {}
+pub trait NodeTrait: Eq + Hash + Copy + Ord + PartialEq {}
+impl<TNode> NodeTrait for TNode where TNode: Eq + Hash + Copy + Ord + PartialEq {}
 
 impl<TNode, TEdge, Ty> GraphMap<TNode, TEdge, Ty>
 where
@@ -175,6 +176,13 @@ where
         acc
     }
 
+    fn min_max_node(mut nodes: Vec<TNode>) -> (TNode, TNode) {
+        nodes.sort();
+        let min = nodes[0];
+        let max = nodes[nodes.len() - 1];
+        (min, max)
+    }
+
     /// Performs a breadth-first search on the graph, starting from the given start node and
     /// searching for the given goal node.
     ///
@@ -190,13 +198,35 @@ where
     /// the number of edges traversed.
     pub fn bfs(&self, start: TNode, goal: TNode) -> GraphSearchReport<TNode, TEdge> {
         let mut parents = HashMap::new();
-        let mut queue = VecDeque::from(vec![start]);
+        let mut queue = vec![start];
         let mut seen = HashSet::new();
         let mut generated = Vec::new();
         let mut expanded = Vec::new();
+        let mut acc = TEdge::default();
         seen.insert(start);
         generated.push(start);
-        while let Some(node) = queue.pop_front() {
+        while !queue.is_empty() {
+            let node = {
+                let mut min = None;
+                let mut max = None;
+                for (i, node) in queue.iter().enumerate() {
+                    if min.is_none() || node < queue.get(min.unwrap()).unwrap() {
+                        min = Some(i);
+                    }
+                    if max.is_none() || node > queue.get(max.unwrap()).unwrap() {
+                        max = Some(i);
+                    }
+                }
+                // choose min or max randomly
+                let chosen_index = if rand::random() {
+                    min.unwrap()
+                } else {
+                    max.unwrap()
+                };
+                let copy = *queue.get(chosen_index).unwrap();
+                queue.swap_remove(chosen_index);
+                copy
+            };
             expanded.push(node);
             if node == goal {
                 break;
@@ -204,8 +234,9 @@ where
             for neighbor in self.neighbors(node) {
                 generated.push(neighbor);
                 if seen.insert(neighbor) {
+                    acc = acc + *self.get_edge(node, neighbor).unwrap();
                     parents.insert(neighbor, node);
-                    queue.push_back(neighbor);
+                    queue.push(neighbor);
                 }
             }
         }
