@@ -209,7 +209,7 @@ where
                 }
             }
         }
-        if let None = parents.get(&goal) {
+        if parents.get(&goal).is_none() {
             return GraphSearchReport {
                 path: None,
                 distance: None,
